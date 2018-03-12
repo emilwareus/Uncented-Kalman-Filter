@@ -54,6 +54,25 @@ UKF::UKF() {
 
   Hint: one or more values initialized above might be wildly off...
   */
+
+
+
+
+  n_x_ = 5;
+
+  n_aug_ = 7;
+
+  lambda_ = 3- n_aug;
+
+  double weight_0 = lambda / (lambda + n_aug);
+  weights = VectorXd(2 * n_aug + 1);
+  weights(0) = weight_0;
+  for (int i = 1; i<2 * n_aug + 1; i++) {
+	  double weight = 0.5 / (n_aug + lambda);
+	  weights(i) = weight;
+  }
+
+
 }
 
 UKF::~UKF() {}
