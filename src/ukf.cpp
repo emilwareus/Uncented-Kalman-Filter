@@ -120,7 +120,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		weights_ = VectorXd(2 * n_aug_ + 1);
 		weights_(0) = weight_0;
 		for (int i = 1; i<2 * n_aug_ + 1; i++) {
-			double weight = 0.5 / (n_aug + lambda_);
+			double weight = 0.5 / (n_aug_ + lambda_);
 			weights_(i) = weight;
 		}
 
@@ -245,7 +245,7 @@ void UKF::Prediction(double delta_t) {
     //predicted state mean
 	x_.fill(0.0);
 	for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
-		x = x + weights_(i) * Xsig_pred_.col(i);
+		x_ = x_ + weights_(i) * Xsig_pred_.col(i);
 	}
 
 	//predicted state covariance matrix
@@ -253,12 +253,12 @@ void UKF::Prediction(double delta_t) {
 	for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //iterate over sigma points
 
 											   // state difference
-		VectorXd x_diff = Xsig_pred_.col(i) - x;
+		VectorXd x_diff = Xsig_pred_.col(i) - x_;
 		//angle normalization
 		while (x_diff(3)> M_PI) x_diff(3) -= 2.*M_PI;
 		while (x_diff(3)<-M_PI) x_diff(3) += 2.*M_PI;
 
-		P = P + weights_(i) * x_diff * x_diff.transpose();
+		P_ = P_ + weights_(i) * x_diff * x_diff.transpose();
 	}
 
 }
@@ -305,13 +305,13 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 	MatrixXd Z_sig_ = Xsig_pred_.block(0, 0, n_z, 2 * n_aug_ + 1);
 
 	//transform sigma points into measurement space
-	for (int i = 0; i < 2 * n_aug + 1; i++) {
+	for (int i = 0; i < 2 * n_aug_ + 1; i++) {
 
-		double px = Xsig_pred(0, i);
-		double py = Xsig_pred(1, i);
-		double v = Xsig_pred(2, i);
-		double phi = Xsig_pred(3, i);
-		double phi_dot = Xsig_pred(4, i);
+		double px = Xsig_pred_(0, i);
+		double py = Xsig_pred_(1, i);
+		double v = Xsig_pred_(2, i);
+		double phi = Xsig_pred_(3, i);
+		double phi_dot = Xsig_pred_(4, i);
 
 		double cv = cos(phi)*v;
 		double sv = sin(phi)*v;
