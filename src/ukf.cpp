@@ -63,13 +63,6 @@ UKF::UKF() {
 
   lambda_ = 3- n_aug;
 
-  double weight_0 = lambda / (lambda + n_aug);
-  weights = VectorXd(2 * n_aug + 1);
-  weights(0) = weight_0;
-  for (int i = 1; i<2 * n_aug + 1; i++) {
-	  double weight = 0.5 / (n_aug + lambda);
-	  weights(i) = weight;
-  }
 
 
 
@@ -89,6 +82,71 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   Complete this function! Make sure you switch between lidar and radar
   measurements.
   */
+	if (!is_initialized_) {
+
+		P_ << 1, 0, 0, 0, 0,
+			0, 1, 0, 0, 0,
+			0, 0, 1, 0, 0,
+			0, 0, 0, 1, 0,
+			0, 0, 0, 0, 1;
+
+		if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+
+			x << (meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0, 0, 0);
+
+			if (fabs(x_(0)) < 0.001 and fabs(x_(1)) < 0.001) {
+				x_(0) = 0.001;
+				x_(1) = 0.001;
+ 			}
+
+		}
+		else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+			float rho = meas_package.raw_measurements_[0];
+			float phi = meas_package.raw_measurements_[1];
+			float rho_dot = meas_package.raw_measurements_[2];
+
+			float px = rho * cos(phi);
+			float py = rho * sin(phi);
+			float vx = rho_dot * cos(phi);
+			float vy = rho_dot * sin(phi);
+			float v = sqrt(vx*vx + vy*vy);
+			
+			x << (px, py, v, 0, 0);
+
+
+		}
+
+		double weight_0 = lambda / (lambda + n_aug);
+		weights = VectorXd(2 * n_aug + 1);
+		weights(0) = weight_0;
+		for (int i = 1; i<2 * n_aug + 1; i++) {
+			double weight = 0.5 / (n_aug + lambda);
+			weights(i) = weight;
+		}
+
+		time_us_ = measurement_pack.timestamp_;
+
+		is_initialized_ = true;
+
+	}
+
+	float dt_0 = meas_package.timestamp_ - time_us_;
+	dt /= 1000000.0; //to seconds
+	time_us_ = measurement_pack.timestamp_;
+
+	//Predict sigma points
+	Prediction(dt);
+
+	if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+
+		UpdateLidar(meas_package);
+	}
+	else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+
+		UpdateRadar(meas_package);
+		
+	}
+
 
 
 }
