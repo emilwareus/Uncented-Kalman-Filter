@@ -89,15 +89,16 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 	if (!is_initialized_) {
 
 		P_ << 1, 0, 0, 0, 0,
-			0, 1, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1;
+			  0, 1, 0, 0, 0,
+			  0, 0, 1, 0, 0,
+			  0, 0, 0, 1, 0,
+			  0, 0, 0, 0, 1;
 		cout << "C1" << endl;
 
 		if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
 
-			x_ << (meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0, 0, 0);
+			cout << "C22" << endl;
+			x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0, 0, 0;
 
 			if (fabs(x_(0)) < 0.001 and fabs(x_(1)) < 0.001) {
 				x_(0) = 0.001;
@@ -107,6 +108,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
 		}
 		else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+			cout << "C33" << endl;
 			float rho = meas_package.raw_measurements_[0];
 			float phi = meas_package.raw_measurements_[1];
 			float rho_dot = meas_package.raw_measurements_[2];
@@ -117,7 +119,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 			float vy = rho_dot * sin(phi);
 			float v = sqrt(vx*vx + vy*vy);
 			
-			x_ << (px, py, v, 0, 0);
+			x_ << px, py, v, 0, 0;
 
 			cout << "C3" << endl;
 		}
