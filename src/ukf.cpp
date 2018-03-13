@@ -93,6 +93,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 			0, 0, 1, 0, 0,
 			0, 0, 0, 1, 0,
 			0, 0, 0, 0, 1;
+		cout << "C1" << endl;
 
 		if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
 
@@ -102,6 +103,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 				x_(0) = 0.001;
 				x_(1) = 0.001;
  			}
+			cout << "C2" << endl;
 
 		}
 		else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
@@ -117,7 +119,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 			
 			x_ << (px, py, v, 0, 0);
 
-
+			cout << "C3" << endl;
 		}
 
 		double weight_0 = lambda_ / (lambda_ + n_aug_);
@@ -128,6 +130,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 			weights_(i) = weight;
 		}
 
+		cout << "C4" << endl;
 		time_us_ = meas_package.timestamp_;
 
 		is_initialized_ = true;
