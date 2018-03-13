@@ -66,7 +66,7 @@ UKF::UKF() {
   weights_ = VectorXd(2 * n_aug_ + 1);
 
 
-
+  cout << "Test 1 check" << endl;
 
 
 }
@@ -84,6 +84,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   Complete this function! Make sure you switch between lidar and radar
   measurements.
   */
+
+	cout << "Test 2 check" << endl;
 	if (!is_initialized_) {
 
 		P_ << 1, 0, 0, 0, 0,
@@ -129,7 +131,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		time_us_ = meas_package.timestamp_;
 
 		is_initialized_ = true;
-
+		cout << "Test 3 check, Initialized" << endl;
 	}
 
 	float dt = meas_package.timestamp_ - time_us_;
@@ -149,7 +151,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		
 	}
 
-
+	cout << "Test 4 check" << endl;
 
 }
 
@@ -242,6 +244,8 @@ void UKF::Prediction(double delta_t) {
 		Xsig_pred_(2, i) = v_p;
 		Xsig_pred_(3, i) = yaw_p;
 		Xsig_pred_(4, i) = yawd_p;
+
+		cout << "Test 5 check, Prediction done" << endl;
 	}
 
     //predicted state mean
@@ -285,6 +289,8 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 	MatrixXd Z_sig_ = Xsig_pred_.block(0, 0, n_z, 2 * n_aug_ + 1);
 	UpdateUKF(meas_package, Z_sig_, n_z);
 
+	cout << "Test Lidar check" << endl;
+
 }
 
 /**
@@ -326,7 +332,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
 	
 	UpdateUKF(meas_package, Z_sig_, n_z);
-
+	cout << "Test Radar check" << endl;
 	
 
 
