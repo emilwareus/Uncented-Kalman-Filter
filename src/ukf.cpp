@@ -66,8 +66,7 @@ UKF::UKF() {
   weights_ = VectorXd(2 * n_aug_ + 1);
 
 
-  cout << "Test 1 check" << endl;
-
+ 
 
 }
 
@@ -85,7 +84,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   measurements.
   */
 
-	cout << "Test 2 check" << endl;
+
 	if (!is_initialized_) {
 
 		P_ << 1, 0, 0, 0, 0,
@@ -93,22 +92,20 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 			  0, 0, 1, 0, 0,
 			  0, 0, 0, 1, 0,
 			  0, 0, 0, 0, 1;
-		cout << "C1" << endl;
-
+		
 		if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
 
-			cout << "C22" << endl;
 			x_ << meas_package.raw_measurements_[0], meas_package.raw_measurements_[1], 0, 0, 0;
 
 			if (fabs(x_(0)) < 0.001 and fabs(x_(1)) < 0.001) {
 				x_(0) = 0.001;
 				x_(1) = 0.001;
  			}
-			cout << "C2" << endl;
+			
 
 		}
 		else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
-			cout << "C33" << endl;
+			
 			float rho = meas_package.raw_measurements_[0];
 			float phi = meas_package.raw_measurements_[1];
 			float rho_dot = meas_package.raw_measurements_[2];
@@ -120,8 +117,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 			float v = sqrt(vx*vx + vy*vy);
 			
 			x_ << px, py, v, 0, 0;
-
-			cout << "C3" << endl;
 		}
 
 		double weight_0 = lambda_ / (lambda_ + n_aug_);
@@ -136,7 +131,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		time_us_ = meas_package.timestamp_;
 
 		is_initialized_ = true;
-		cout << "Test 3 check, Initialized" << endl;
+		cout << "Initialized" << endl;
 	}
 
 	float dt = meas_package.timestamp_ - time_us_;
@@ -156,7 +151,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 		
 	}
 
-	cout << "Test 4 check" << endl;
 
 }
 
@@ -250,7 +244,7 @@ void UKF::Prediction(double delta_t) {
 		Xsig_pred_(3, i) = yaw_p;
 		Xsig_pred_(4, i) = yawd_p;
 
-		cout << "Test 5 check, Prediction done" << endl;
+		
 	}
 
     //predicted state mean
@@ -294,7 +288,6 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 	MatrixXd Z_sig_ = Xsig_pred_.block(0, 0, n_z, 2 * n_aug_ + 1);
 	UpdateUKF(meas_package, Z_sig_, n_z);
 
-	cout << "Test Lidar check" << endl;
 
 }
 
@@ -337,10 +330,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
 	
 	UpdateUKF(meas_package, Z_sig_, n_z);
-	cout << "Test Radar check" << endl;
 	
-
-
 }
 
 
